@@ -5,20 +5,17 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia;
 
-import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
-import br.ufg.inf.es.saep.sandbox.dominio.Radoc;
-import br.ufg.inf.es.saep.sandbox.dominio.Relato;
-import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
-import br.ufg.inf.es.saep.sandbox.dominio.Valor;
+import br.ufg.inf.es.saep.sandbox.dominio.Regra;
+import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
+import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
+import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoDAO;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import java.util.AbstractSet;
+import com.mongodb.client.MongoIterable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bson.Document;
 
 /**
@@ -35,34 +32,39 @@ public class MainClass {
         // TODO code application logic here
         MongoClient cliente = new MongoClient();
         MongoDatabase database = cliente.getDatabase("Saep");
-
-        Atributo att = new Atributo("A1", "Um atributo de teste", Atributo.LOGICO);
-        Atributo att2 = new Atributo("A2", "Segundo atributo de teste", Atributo.STRING);
         
-        Valor valor = new Valor(true);
-        Valor valor2 = new Valor("Valor2");
-
-        Map<String, Valor> mapaRelato = new HashMap<>();
-        mapaRelato.put("A1", valor);
-        mapaRelato.put("A2", valor2);
-
-        Set<Atributo> atributos = new HashSet<>();
-        atributos.add(att);
-        atributos.add(att2);
-
-        Tipo tipo = new Tipo("teste", "T1", "um tipo de teste", atributos);
-
-        Relato relato = new Relato("Teste", mapaRelato);
-        Document relDoc = SaepConversor.convertRelatoToDocument(relato, tipo);
+        MongoIterable<String> collectionNames = database.listCollectionNames();
+        for(String name : collectionNames){
+            System.out.println("Collection: " + name);
+            System.out.println("Tamanho: " + database.getCollection(name).count() );
+        }
         
-        List<Relato> listaRelato = new ArrayList<>();
-        listaRelato.add(relato);
+        List<String> dependeDe = new ArrayList<>();
+        dependeDe.add("B = 1 + 1");
+        dependeDe.add("C = 2*5");
         
-        Radoc radoc = new Radoc(listaRelato);
-        Document radDoc = SaepConversor.converterRadocToDocument(radoc);
-        System.out.println("Radoc: " + radDoc.toJson());
+        Regra regra1 = new Regra("B + C", 60 , 0 , dependeDe, "Regra de teste", "A");
+        regra1.setTipoRegra(Regra.EXPRESSAO);
+        
+        List<Regra> regras = new ArrayList<>();
+        regras.add(regra1);
+        
+        Date date = Calendar.getInstance().getTime();
+        Resolucao resolucao = new Resolucao("Res1", "resolucao de teste", date, regras);
+        
+        Document resoDoc = SaepConversor.convertResolucaoToDocument(resolucao);
+        
+        ResolucaoDAO resolucaoDAO = new ResolucaoDAO(database);
+        
+        resolucaoDAO.insert(resoDoc);
+        System.out.println("Insert: " + resoDoc.toJson());
+        
+        Document x = resolucaoDAO.search("Res1");
+        System.out.println("get: " + x.toJson());
+        
         
         System.out.println("OK:");
+        database.drop();
     }
 
 }

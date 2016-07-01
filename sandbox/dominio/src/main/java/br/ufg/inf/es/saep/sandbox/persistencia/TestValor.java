@@ -17,7 +17,7 @@ import org.bson.Document;
  */
 public class TestValor {
 
-    public void test1() {
+    public static void test1() {
 
         Valor valor1 = new Valor("Oi");
         Document docValor1 = SaepConversor.convertValorToDocument(valor1, Atributo.STRING);

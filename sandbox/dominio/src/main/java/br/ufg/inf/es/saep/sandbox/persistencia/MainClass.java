@@ -11,6 +11,7 @@ import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoDAO;
+import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoPersistence;
 import br.ufg.inf.es.saep.sandbox.persistencia.DAO.TipoDAO;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -44,40 +45,24 @@ public class MainClass {
             System.out.println("Tamanho: " + database.getCollection(name).count() );
         }
         
-        TestAtributo ta = new TestAtributo();
-        ta.test1();
+        //TestAtributo.test1();
+        //TestValor.test1();
+        //TestRegra.test1();
+        TestTipo.test1();
+        TestResolucao.test1();
         
-        List<String> dependeDe = new ArrayList<>();
-        dependeDe.add("B = 1 + 1");
-        dependeDe.add("C = 2*5");
+        Tipo tipo = TestTipo.get();
+        Resolucao resolucao = TestResolucao.get();
         
-        Regra regra1 = new Regra("B + C", 60 , 0 , dependeDe, "Regra de teste", "A");
-        regra1.setTipoRegra(Regra.EXPRESSAO);
+        ResolucaoPersistence resolucaoPersistence = new ResolucaoPersistence(database);
+        resolucaoPersistence.persiste(resolucao);
+        resolucaoPersistence.persiste(tipo);
         
-        List<Regra> regras = new ArrayList<>();
-        regras.add(regra1);
-        
-        Date date = Calendar.getInstance().getTime();
-        Resolucao resolucao = new Resolucao("Res1", "resolucao de teste", date, regras);
-        
-        Document resoDoc = SaepConversor.convertResolucaoToDocument(resolucao);
-        
-        ResolucaoDAO resolucaoDAO = new ResolucaoDAO(database);
-        resolucaoDAO.insert(resoDoc);
-        Document x = resolucaoDAO.search("Res1");
-        
-        Set<Atributo> atributos = new HashSet<>();
-        Atributo a1 = new Atributo("T_att1", "Atributo de teste", Atributo.LOGICO);
-        atributos.add(a1);
-        Tipo tipo = new Tipo("Teste", "T", "Um tipo de teste", atributos);
-        
-        TipoDAO tipoDAO = new TipoDAO(database);
-        Document tipoDoc = SaepConversor.convertTipoToDocument(tipo);
-        tipoDAO.insert(tipoDoc);
-        System.out.println("Inseriu");
-        
-        Document tipoDoc2 = tipoDAO.search("T");
-        
+        Tipo teste = resolucaoPersistence.byCodigo("T_tipo1");
+        Resolucao treso = resolucaoPersistence.byId("Res1");
+        List<Tipo> lista = resolucaoPersistence.byNome("T");
+        List<String> resolucoes = resolucaoPersistence.resolucoes();
+        resolucaoPersistence.remove("Res1");
         
         System.out.println("OK:");
         database.drop();

@@ -16,7 +16,7 @@ import org.bson.Document;
  */
 public class TestAtributo {
 
-    public void test1() {
+    public static void test1() {
 
         Atributo atributo1 = new Atributo("T_att1", "Atributo de teste", Atributo.LOGICO);
         Document docAtributo1 = SaepConversor.convertAtributoToDocument(atributo1);

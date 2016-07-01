@@ -15,7 +15,6 @@ import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.dominio.Valor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
 import java.io.IOException;
 import java.util.List;
 import org.bson.Document;
@@ -75,7 +74,7 @@ public class SaepConversor {
             ObjectMapper mapper = new ObjectMapper();
             String atributoJson = mapper.writeValueAsString(atributo);
             Document document = Document.parse(atributoJson);
-
+            
             return (document);
 
         } catch (IOException e) {

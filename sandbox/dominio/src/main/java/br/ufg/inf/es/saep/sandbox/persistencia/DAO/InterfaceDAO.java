@@ -5,6 +5,7 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
+import java.util.List;
 import org.bson.Document;
 
 /**
@@ -16,6 +17,6 @@ public interface InterfaceDAO {
     void insert(Document object);
     void update(Object id, Document object);
     Document search(Object id);
-    void remove(Object id);
-    
+    boolean remove(Object id);
+    List<String> listAll();
 }

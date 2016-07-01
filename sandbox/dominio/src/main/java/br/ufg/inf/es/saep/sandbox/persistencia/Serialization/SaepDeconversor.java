@@ -22,10 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import org.bson.Document;
 
 /**
@@ -34,20 +34,30 @@ import org.bson.Document;
  */
 public class SaepDeconversor {
 
-    public static Valor deconvertValorToDocument(Document document) {
+    public static Valor deconvertDocumentToValor(Document document) {
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Valor valor = mapper.readValue(document.toJson(), Valor.class);
+        Integer tp = document.getInteger("tipo");
+        Valor valor = null;
+        
+        switch (tp.intValue()) {
 
-            return (valor);
+            case Atributo.LOGICO:
+                valor = new Valor(document.getBoolean("boolean").booleanValue());
+                break;
 
-        } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter o Document para valor.");
+            case Atributo.REAL:
+                valor = new Valor(document.getDouble("float").floatValue());
+                break;
+
+            case Atributo.STRING:
+                valor = new Valor(document.getString("string"));
+                break;
         }
+
+        return(valor);
     }
 
-    public static Relato deconvertRelatoToDocument(Document document) {
+    public static Relato deconvertDocumentToRelato(Document document) {
 
         /*Document document;
 
@@ -76,40 +86,45 @@ public class SaepDeconversor {
         return (relato);
     }
 
-    public static Atributo deconvertAtributoToDocument(Document document) {
+    public static Atributo deconvertDocumentToAtributo(Document document) {
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Atributo atributo = mapper.readValue(document.toJson(), Atributo.class);
+        String nome = document.getString("nome");
+        String descricao = document.getString("descricao");
+        Integer tp = document.getInteger("tipo");
 
-            return (atributo);
+        Atributo atributo = new Atributo(nome, descricao, tp.intValue());
+        return (atributo);
 
-        } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter o Document para atributo.");
-        }
     }
 
-    public static Radoc deconvertRadocToDocument(Document document) {
+    public static Radoc deconvertDocumentToRadoc(Document document) {
 
         Radoc radoc = new Radoc(null);
 
         return (radoc);
     }
 
-    public static Tipo deconvertTipoToDocument(Document document) {
+    public static Tipo deconvertDocumentToTipo(Document document) {
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            Tipo tipo = mapper.readValue(document.toJson(), Tipo.class);
+        document.remove("_id");
 
-            return (tipo);
+        String nome = document.getString("nome");
+        String codigo = document.getString("codigo");
+        String descricao = document.getString("descricao");
 
-        } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter o Document para tipo.");
+        List<Document> listaDocument = (ArrayList<Document>) document.get("atributos");
+        Set<Atributo> atributos = new HashSet<>();
+
+        for (Document docAtributo : listaDocument) {
+            atributos.add(SaepDeconversor.deconvertDocumentToAtributo(docAtributo));
         }
+
+        Tipo tipo = new Tipo(nome, codigo, descricao, atributos);
+
+        return (tipo);
     }
 
-    public static Grupo deconvertGrupoToDocument(Document document) {
+    public static Grupo deconvertDocumentToGrupo(Document document) {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -122,7 +137,7 @@ public class SaepDeconversor {
         }
     }
 
-    public static Regra deconvertRegraToDocument(Document document) {
+    public static Regra deconvertDocumentToRegra(Document document) {
 
         Regra regra = new Regra(null, 0, 0, null, null, null);
 
@@ -148,14 +163,14 @@ public class SaepDeconversor {
         return (regra);
     }
 
-    public static Resolucao deconvertResolucaoToDocument(Document document) {
+    public static Resolucao deconvertDocumentToResolucao(Document document) {
 
         document.remove("_id");
         List<Document> listaDocument = (ArrayList<Document>) document.get("regras");
         List<Regra> listaRegras = new ArrayList<>();
 
         for (Document docRegras : listaDocument) {
-            listaRegras.add(SaepDeconversor.deconvertRegraToDocument(docRegras));
+            listaRegras.add(SaepDeconversor.deconvertDocumentToRegra(docRegras));
         }
 
         try {

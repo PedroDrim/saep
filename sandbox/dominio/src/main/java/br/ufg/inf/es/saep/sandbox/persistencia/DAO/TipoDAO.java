@@ -7,6 +7,7 @@ package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
 import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
+import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
 import com.mongodb.client.MongoDatabase;
@@ -19,12 +20,12 @@ import org.bson.Document;
  *
  * @author pedro
  */
-public class ResolucaoDAO implements InterfaceDAO{
+public class TipoDAO implements InterfaceDAO{
 
-    public static final String COLLECTION_NAME = "Resolucao";
+    public static final String COLLECTION_NAME = "Tipo";
     private MongoDatabase database;
     
-    public ResolucaoDAO(MongoDatabase database){
+    public TipoDAO(MongoDatabase database){
         this.database = database;
     }
     
@@ -41,30 +42,30 @@ public class ResolucaoDAO implements InterfaceDAO{
 
     @Override
     public Document search(Object id) {
-        String resolucaoId = (String) id;
+        String tipoId = (String) id;
         
         Iterable<Document> iterable = this.database.getCollection(COLLECTION_NAME).find();
         for(Document document : iterable){
             
-            Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            if( resolucaoId.equals(resolucao.getIdentificador()) ){
-                return( SaepConversor.convertResolucaoToDocument(resolucao) );
+            Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
+            if( tipoId.equals(tipo.getCodigo()) ){
+                return( SaepConversor.convertTipoToDocument(tipo) );
             }
         }
         
-        throw new SaepException("Nao foi encontrado resolucao com o id " + resolucaoId);
+        throw new SaepException("Nao foi encontrado tipo com o id " + tipoId);
     }
 
     @Override
     public boolean remove(Object id) {
 
-        String resolucaoId = (String) id;
+        String tipoId = (String) id;
         
         Iterable<Document> iterable = this.database.getCollection(COLLECTION_NAME).find();
         for(Document document : iterable){
             
-            Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            if( resolucaoId.equals(resolucao.getIdentificador()) ){
+            Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
+            if( tipoId.equals(tipo.getCodigo()) ){
                 
                 BsonDocument bdoc = BsonDocument.parse(document.toJson());
                 this.database.getCollection(COLLECTION_NAME).findOneAndDelete(bdoc);
@@ -72,7 +73,7 @@ public class ResolucaoDAO implements InterfaceDAO{
             }
         }
         
-        throw new SaepException("Nao foi encontrado resolucao com o id " + resolucaoId);
+        throw new SaepException("Nao foi encontrado tipo com o id " + tipoId);
 
     }
 
@@ -84,8 +85,8 @@ public class ResolucaoDAO implements InterfaceDAO{
         Iterable<Document> iterable = this.database.getCollection(COLLECTION_NAME).find();
         for(Document document : iterable){
             
-            Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            listaIds.add(resolucao.getIdentificador());
+            Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
+            listaIds.add(tipo.getCodigo());
         }        
         
         return(listaIds);

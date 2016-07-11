@@ -36,30 +36,39 @@ public class SaepDeconversor {
 
     public static Valor deconvertDocumentToValor(Document document) {
 
-        Integer tp = document.getInteger("tipo");
-        Valor valor = null;
-        
-        switch (tp.intValue()) {
+        try {
+            
+            document.remove("_id");
+            Integer tp = document.getInteger("tipo");
+            Valor valor = null;
 
-            case Atributo.LOGICO:
-                valor = new Valor(document.getBoolean("boolean").booleanValue());
-                break;
+            switch (tp.intValue()) {
 
-            case Atributo.REAL:
-                valor = new Valor(document.getDouble("float").floatValue());
-                break;
+                case Atributo.LOGICO:
+                    valor = new Valor(document.getBoolean("boolean").booleanValue());
+                    break;
 
-            case Atributo.STRING:
-                valor = new Valor(document.getString("string"));
-                break;
+                case Atributo.REAL:
+                    valor = new Valor(document.getDouble("float").floatValue());
+                    break;
+
+                case Atributo.STRING:
+                    valor = new Valor(document.getString("string"));
+                    break;
+            }
+
+            return (valor);
+        } catch (Exception ex) {
+            throw new SaepException("Nao foi possivel converter o Document para resolucao.");
         }
 
-        return(valor);
     }
 
     public static Relato deconvertDocumentToRelato(Document document) {
 
-        /*Document document;
+        try {
+
+            /*Document document;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -81,52 +90,69 @@ public class SaepDeconversor {
         }
 
         document.append("valorPorNome", documentAtributoCompleto);
-         */
-        Relato relato = new Relato("1", null);
-        return (relato);
+             */
+            Relato relato = new Relato("1", null);
+            return (relato);
+        } catch (Exception ex) {
+            throw new SaepException("Nao foi possivel converter o Document para resolucao.");
+        }
+
     }
 
     public static Atributo deconvertDocumentToAtributo(Document document) {
 
-        String nome = document.getString("nome");
-        String descricao = document.getString("descricao");
-        Integer tp = document.getInteger("tipo");
+        try {
 
-        Atributo atributo = new Atributo(nome, descricao, tp.intValue());
-        return (atributo);
+            document.remove("_id");
 
+            String nome = document.getString("nome");
+            String descricao = document.getString("descricao");
+            Integer tp = document.getInteger("tipo");
+
+            Atributo atributo = new Atributo(nome, descricao, tp.intValue());
+            return (atributo);
+
+        } catch (Exception ex) {
+            throw new SaepException("Nao foi possivel converter o Document para atributo.");
+        }
     }
 
     public static Radoc deconvertDocumentToRadoc(Document document) {
 
-        Radoc radoc = new Radoc(null);
-
-        return (radoc);
+        return (null);
     }
 
     public static Tipo deconvertDocumentToTipo(Document document) {
 
-        document.remove("_id");
+        try {
 
-        String nome = document.getString("nome");
-        String codigo = document.getString("codigo");
-        String descricao = document.getString("descricao");
+            document.remove("_id");
 
-        List<Document> listaDocument = (ArrayList<Document>) document.get("atributos");
-        Set<Atributo> atributos = new HashSet<>();
+            String id = document.getString("id");
+            String nome = document.getString("nome");
+            String descricao = document.getString("descricao");
 
-        for (Document docAtributo : listaDocument) {
-            atributos.add(SaepDeconversor.deconvertDocumentToAtributo(docAtributo));
+            List<Document> listaDocument = (ArrayList<Document>) document.get("atributos");
+            Set<Atributo> atributos = new HashSet<>();
+
+            for (Document docAtributo : listaDocument) {
+                atributos.add(SaepDeconversor.deconvertDocumentToAtributo(docAtributo));
+            }
+
+            Tipo tipo = new Tipo(id, nome, descricao, atributos);
+
+            return (tipo);
+
+        } catch (Exception ex) {
+            throw new SaepException("Nao foi possivel converter o Document para tipo.");
         }
-
-        Tipo tipo = new Tipo(nome, codigo, descricao, atributos);
-
-        return (tipo);
     }
 
     public static Grupo deconvertDocumentToGrupo(Document document) {
 
         try {
+            document.remove("_id");
+
             ObjectMapper mapper = new ObjectMapper();
             Grupo grupo = mapper.readValue(document.toJson(), Grupo.class);
 
@@ -139,50 +165,61 @@ public class SaepDeconversor {
 
     public static Regra deconvertDocumentToRegra(Document document) {
 
-        Regra regra = new Regra(null, 0, 0, null, null, null);
+        try {
 
-        List<String> dependeDe = (ArrayList<String>) document.get("dependeDe");
+            document.remove("_id");
 
-        regra.setDependeDe(dependeDe);
-        regra.setDescricao(document.getString("descricao"));
-        regra.setExpressao(document.getString("expressao"));
-        regra.setEntao(document.getString("entao"));
-        regra.setSenao(document.getString("senao"));
+            Double ppr = (Double) document.get("pontosPorItem");
+            Double vmax = (Double) document.get("valorMaximo");
+            Double vmin = (Double) document.get("valorMinimo");
 
-        Double ppr = (Double) document.get("pontosPorRelato");
-        Double vmax = (Double) document.get("valorMaximo");
-        Double vmin = (Double) document.get("valorMinimo");
-        regra.setPontosPorRelato(ppr.intValue());
-        regra.setValorMaximo(vmax.floatValue());
-        regra.setValorMaximo(vmin.floatValue());
+            List<String> dependeDe = (ArrayList<String>) document.get("dependeDe");
 
-        regra.setTipo(document.getString("tipo"));
-        regra.setTipoRegra(document.getInteger("tipoRegra"));
-        regra.setVariavel(document.getString("variavel"));
+            Regra regra = new Regra(
+                    document.getString("variavel"),
+                    document.getInteger("tipo"),
+                    document.getString("descricao"),
+                    vmax.floatValue(), vmin.floatValue(),
+                    document.getString("expressao"),
+                    document.getString("entao"),
+                    document.getString("senao"),
+                    document.getString("tipoRelato"),
+                    ppr.longValue(), dependeDe);
 
-        return (regra);
+            return (regra);
+
+        } catch (Exception ex) {
+            throw new SaepException("Nao foi possivel converter o Document para regra.");
+        }
     }
 
     public static Resolucao deconvertDocumentToResolucao(Document document) {
 
-        document.remove("_id");
-        List<Document> listaDocument = (ArrayList<Document>) document.get("regras");
-        List<Regra> listaRegras = new ArrayList<>();
-
-        for (Document docRegras : listaDocument) {
-            listaRegras.add(SaepDeconversor.deconvertDocumentToRegra(docRegras));
-        }
-
         try {
-            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            Date dataAprovacao = formato.parse(document.getString("dataAprovacao"));
 
-            Resolucao resolucao = new Resolucao(document.getString("identificador"),
-                    document.getString("descricao"), dataAprovacao, listaRegras);
+            document.remove("_id");
+
+            List<Document> listaDocument = (ArrayList<Document>) document.get("regras");
+            List<Regra> listaRegras = new ArrayList<>();
+
+            for (Document docRegras : listaDocument) {
+                listaRegras.add(SaepDeconversor.deconvertDocumentToRegra(docRegras));
+            }
+
+            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+
+            long longdate = document.getLong("dataAprovacao").longValue();
+            Date date = new Date(longdate);
+
+            Resolucao resolucao = new Resolucao(
+                    document.getString("id"),
+                    document.getString("nome"),
+                    document.getString("descricao"),
+                    date, listaRegras);
 
             return (resolucao);
 
-        } catch (ParseException ex) {
+        } catch (Exception ex) {
             throw new SaepException("Nao foi possivel converter o Document para resolucao.");
         }
 

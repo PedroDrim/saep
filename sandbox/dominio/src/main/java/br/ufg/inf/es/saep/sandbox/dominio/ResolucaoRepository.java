@@ -8,8 +8,8 @@ package br.ufg.inf.es.saep.sandbox.dominio;
 import java.util.List;
 
 /**
- * Serviços oferecidos para abstração da implementação da
- * persistência de resoluções.
+ * Operações para oferecer a noção de coleções
+ * de resoluções em memória.
  *
  * <p>Uma resolução é formada por um conjunto de regras.
  * Está além do escopo do SAEP a edição de resoluções.
@@ -18,8 +18,14 @@ import java.util.List;
  *
  * <p>Dada a sensibilidade, os raros usuários autorizados
  * e a frequência, a edição pode ser realizada por pessoal
- * técnico que produzirá uma instância de {@link Radoc} a
+ * técnico que produzirá uma instância de {@link Resolucao} a
  * ser recebida pelo presente repositório.
+ *
+ * <p>Não existe opção para atualizar uma {@link Resolucao}.
+ * Um parecer disponível, se tem a resolução correspondente
+ * alterada, pode dar origem a um resultado distinto.
+ * Em consequência, não existe opção para atualização de
+ * {@link Resolucao}.
  *
  * @see Resolucao
  */
@@ -29,19 +35,25 @@ public interface ResolucaoRepository {
      * Recupera a instância de {@code Resolucao} correspondente
      * ao identificador.
      *
-     * @param identificador O identificador único da resolução a
+     * @param id O identificador único da resolução a
      *                      ser recuperada.
      *
-     * @return {@code Resolucao} identificada por {@code identificador}.
+     * @return {@code Resolucao} identificada por {@code id}.
      * O retorno {@code null} indica que não existe resolução
      * com o identificador fornecido.
      *
      * @see #persiste(Resolucao)
      */
-    Resolucao byId(String identificador);
+    Resolucao byId(String id);
 
     /**
-     * Persiste uma nova resolução.
+     * Persiste uma resolução.
+     *
+     * @throws CampoExigidoNaoFornecido Caso o identificador não
+     * seja fornecido.
+     *
+     * @throws IdentificadorExistente Caso uma resolução com identificador
+     * igual àquele fornecido já exista.
      *
      * @param resolucao A resolução a ser persistida.
      *
@@ -53,6 +65,7 @@ public interface ResolucaoRepository {
      * identificador semelhante.
      *
      * @see #byId(String)
+     * @see #remove(String)
      */
     String persiste(Resolucao resolucao);
 
@@ -60,7 +73,9 @@ public interface ResolucaoRepository {
      * Remove a resolução com o identificador
      * fornecido.
      *
-     * @param identificador O identificador (uso externo) da
+     * @see #persiste(Resolucao)
+     *
+     * @param identificador O identificador único da
      *                      resolução a ser removida.
      *
      * @return O valor {@code true} se a operação foi
@@ -79,9 +94,24 @@ public interface ResolucaoRepository {
 
     /**
      * Persiste o tipo fornecido.
-     * @param tipo
+     *
+     * @throws IdentificadorExistente Caso o tipo já
+     * esteja persistido no repositório.
+     *
+     * @param tipo O objeto a ser persistido.
      */
-    void persiste(Tipo tipo);
+    void persisteTipo(Tipo tipo);
+
+    /**
+     * Remove o tipo.
+     *
+     * @throws ResolucaoUsaTipoException O tipo
+     * é empregado por pelo menos uma resolução.
+     *
+     * @param codigo O identificador do tipo a
+     *               ser removido.
+     */
+    void removeTipo(String codigo);
 
     /**
      * Recupera o tipo com o código fornecido.
@@ -92,11 +122,14 @@ public interface ResolucaoRepository {
      * código único é fornecido. Retorna {@code null}
      * caso não exista tipo com o código indicado.
      */
-    Tipo byCodigo(String codigo);
+    Tipo tipoPeloCodigo(String codigo);
 
     /**
      * Recupera a lista de tipos cujos nomes
-     * são similares àquele fornecido.
+     * são similares àquele fornecido. Um nome é
+     * similar àquele do tipo caso contenha o
+     * argumento fornecido. Por exemplo, para o nome
+     * "casa" temos que "asa" é similar.
      *
      * Um nome é dito similar se contém a sequência
      * indicada.
@@ -107,5 +140,5 @@ public interface ResolucaoRepository {
      * @return A coleção de tipos cujos nomes satisfazem
      * um padrão de semelhança com a sequência indicada.
      */
-    List<Tipo> byNome(String nome);
+    List<Tipo> tiposPeloNome(String nome);
 }

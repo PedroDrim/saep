@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufg.inf.es.saep.sandbox.persistencia;
+package br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
@@ -32,15 +32,14 @@ public class TestTipo {
         atributos.add(atributo2);
         atributos.add(atributo3);
 
-        Tipo tipo1 = new Tipo("Teste", "T_tipo1", "Um tipo de teste", atributos);
+        Tipo tipo1 = new Tipo("TT", "tipo1", "Um tipo de teste", atributos);
 
         Document tipoDoc = SaepConversor.convertTipoToDocument(tipo1);
         System.out.println("Tipo1 : " + tipoDoc.toJson());
 
         Tipo tipoR = SaepDeconversor.deconvertDocumentToTipo(tipoDoc);
 
-        tipo = tipo1;
-        
+        tipo = tipo1;       
         System.out.println("Fim do teste");
     }
     

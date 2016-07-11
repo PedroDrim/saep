@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufg.inf.es.saep.sandbox.persistencia;
+package br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
@@ -30,7 +30,7 @@ public class TestAtributo {
         Document docAtributo3 = SaepConversor.convertAtributoToDocument(atributo3);
         System.out.println("Atributo3 : " + docAtributo3.toJson());
 
-        Atributo atributo1R = SaepDeconversor.deconvertDocumentToAtributo(docAtributo1);
+        Atributo atributo1R = SaepDeconversor.deconvertDocumentToAtributo(docAtributo1);        
         Atributo atributo2R = SaepDeconversor.deconvertDocumentToAtributo(docAtributo2);
         Atributo atributo3R = SaepDeconversor.deconvertDocumentToAtributo(docAtributo3);
     

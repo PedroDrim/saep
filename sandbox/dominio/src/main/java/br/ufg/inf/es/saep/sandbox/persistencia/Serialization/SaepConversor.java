@@ -141,7 +141,7 @@ public class SaepConversor {
             return (document);
 
         } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter a resolucao " + resolucao.getIdentificador() + " para Document.");
+            throw new SaepException("Nao foi possivel converter a resolucao " + resolucao.getId() + " para Document.");
         }
     }
 }

@@ -50,46 +50,46 @@ public class ResolucaoPersistence implements ResolucaoRepository{
         Document document = SaepConversor.convertResolucaoToDocument(resolucao);
         this.daoResolucao.insert(document);
         
-        return(resolucao.getIdentificador());
+        return(resolucao.getId());
     }
 
     @Override
     public boolean remove(String identificador) {
-    
         this.daoResolucao.remove(identificador);
         return(true);
     }
 
     @Override
     public List<String> resolucoes() {
-    
         return(this.daoResolucao.listAll());
     }
 
     @Override
-    public void persiste(Tipo tipo) {
-        
+    public void persisteTipo(Tipo tipo) {
         Document document = SaepConversor.convertTipoToDocument(tipo);
         this.daoTipo.insert(document);
     }
 
     @Override
-    public Tipo byCodigo(String codigo) {
-    
+    public void removeTipo(String codigo) {
+        this.daoTipo.remove(codigo);
+    }
+
+    @Override
+    public Tipo tipoPeloCodigo(String codigo) {
         Document document = this.daoTipo.search(codigo);
         return(SaepDeconversor.deconvertDocumentToTipo(document));
     }
 
     @Override
-    public List<Tipo> byNome(String nome) {
+    public List<Tipo> tiposPeloNome(String nome) {
     
         List<String> listaNomes = this.daoTipo.listAll();
         List<Tipo> listaTipo = new ArrayList<>();
         
         for(String id : listaNomes){
             
-            String code = id.split("_")[0];
-            if(code.equals(nome)){
+            if(id.contains(nome)){
                 
                 Document document = this.daoTipo.search(id);
                 Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
@@ -98,6 +98,5 @@ public class ResolucaoPersistence implements ResolucaoRepository{
         }
         
         return(listaTipo);
-    }
-    
+  }
 }

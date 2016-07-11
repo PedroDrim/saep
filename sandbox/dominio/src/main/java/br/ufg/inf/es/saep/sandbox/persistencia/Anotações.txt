@@ -1,0 +1,4 @@
+ResolucaoPersistence -> (1) Tipo , (2) Resolucao
+(1) Tipo (OK!) -> (*) Atributo (OK!)
+(2) Resolucao (OK!) -> (2.1) Regra (OK!)
+(2.1) Regra (OK!) -> (*) Atributo (OK!)

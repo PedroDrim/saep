@@ -5,7 +5,6 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
-import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
 import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
@@ -48,7 +47,7 @@ public class TipoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
-            if( tipoId.equals(tipo.getCodigo()) ){
+            if( tipoId.equals(tipo.getId()) ){
                 return( SaepConversor.convertTipoToDocument(tipo) );
             }
         }
@@ -65,7 +64,7 @@ public class TipoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
-            if( tipoId.equals(tipo.getCodigo()) ){
+            if( tipoId.equals(tipo.hashCode()) ){
                 
                 BsonDocument bdoc = BsonDocument.parse(document.toJson());
                 this.database.getCollection(COLLECTION_NAME).findOneAndDelete(bdoc);
@@ -86,7 +85,7 @@ public class TipoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Tipo tipo = SaepDeconversor.deconvertDocumentToTipo(document);
-            listaIds.add(tipo.getCodigo());
+            listaIds.add(tipo.getId());
         }        
         
         return(listaIds);

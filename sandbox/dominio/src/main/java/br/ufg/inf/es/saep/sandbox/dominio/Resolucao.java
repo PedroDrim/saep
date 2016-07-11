@@ -5,8 +5,6 @@
 
 package br.ufg.inf.es.saep.sandbox.dominio;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.util.Date;
 import java.util.List;
 
@@ -22,19 +20,25 @@ import java.util.List;
 public class Resolucao {
 
     /**
-     * Identificador único da resolução (uso interno).
-     * Contraste com {#link {@link #identificador}.
+     * Identificador único da resolução. Desconhecido
+     * dos usuários (membros da CAD, por exemplo).
+     * Contraste com {#link {@link #nome}.
      */
     private String id;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="dd/MM/yyyy", timezone = "GMT-2")
+    /**
+     * Data de aprovação da resolução.
+     */
     private Date dataAprovacao;
 
     /**
-     * Identificador da resolução (uso externo, por exemplo,
-     * usuários). Contraste com {@link #id}.
+     * Identificador da resolução conforme percebida pelos
+     * usuários). Deveria ser uma chave natural, mas
+     * não há garantia. Por exemplo, resolução "CONSUNI 34/2012".
+     * Ou seja, é empregado aqui como um "nome de fantasia".
+     * Contraste com {@link #id}.
      */
-    private String identificador;
+    private String nome;
 
     /**
      * Descrição ou informação adicional sobre
@@ -45,26 +49,31 @@ public class Resolucao {
     /**
      * Conjunto de regras definido pela resolução.
      */
-    private List<Regra> itens;
+    private List<Regra> regras;
 
-    private Resolucao(){
-        // Usado pelo Jackson (JSON)
+    /**
+     * Recupera o nome único da resolução
+     * (surrogate key).
+     *
+     * @see #getNome()
+     *
+     * @return O nome único da resolução.
+     */
+    public String getId() {
+        return id;
     }
 
     /**
-     * Cria uma resolução a partir dos argumentos
-     * identificados.
-     * @param identificador Identificador da resolução.
-     * @param descricao
-     * @param dataAprovacao Data byId aprovação da resolução.
-     * @param regras Conjunto byId itens que são avaliados pela
+     * Recupera o nome da resolução.
      *
-     * */
-    public Resolucao(String identificador, String descricao, Date dataAprovacao, List<Regra> regras) {
-        this.descricao = descricao;
-        this.dataAprovacao = dataAprovacao;
-        this.identificador = identificador;
-        this.itens = regras;
+     * @return O nome da resolução.
+     */
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
     }
 
     /**
@@ -77,21 +86,65 @@ public class Resolucao {
     }
 
     /**
-     * Recupera o identificador único da resolução.
+     * Recupera o conjunto de regras definido
+     * pela resolução.
      *
-     * @return O identificador único da resolução.
+     * @return Conjunto de regras definido pela resolução.
      */
-    public String getIdentificador() {
-        return identificador;
+    public List<Regra> getRegras() {
+        return regras;
     }
 
     /**
-     * Recupera o conjunto byId itens que são avaliados
-     * pela resolução.
-     *
-     * @return Conjunto byId itens avaliados pela resolução.
+     * Cria uma resolução a partir dos argumentos
+     * identificados.
+     * @param id O nome único da resolução.
+     * @param nome O nome pelo qual seres humanos identificam a resolução.
+     * @param descricao A descrição (caput) da resolução.
+     * @param dataAprovacao Data byId aprovação da resolução.
+     * @param regras Conjunto byId itens que são avaliados pela
      */
-    public List<Regra> getRegras() {
-        return itens;
+    public Resolucao(String id, String nome, String descricao, Date dataAprovacao, List<Regra> regras) {
+        if (id == null || id.isEmpty()) {
+            throw new CampoExigidoNaoFornecido("nome");
+        }
+
+        if (descricao == null || descricao.isEmpty()) {
+            throw new CampoExigidoNaoFornecido("descricao");
+        }
+
+        if (dataAprovacao == null) {
+            throw new CampoExigidoNaoFornecido("dataAprovacao");
+        }
+
+        if (regras == null || regras.size() < 1) {
+            throw new CampoExigidoNaoFornecido("regras");
+        }
+
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.dataAprovacao = dataAprovacao;
+        this.regras = regras;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Resolucao resolucao = (Resolucao) o;
+
+        return id.equals(resolucao.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

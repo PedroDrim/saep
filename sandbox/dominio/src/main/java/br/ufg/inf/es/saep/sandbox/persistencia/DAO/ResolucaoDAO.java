@@ -47,7 +47,7 @@ public class ResolucaoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            if( resolucaoId.equals(resolucao.getIdentificador()) ){
+            if( resolucaoId.equals(resolucao.getId()) ){
                 return( SaepConversor.convertResolucaoToDocument(resolucao) );
             }
         }
@@ -64,7 +64,7 @@ public class ResolucaoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            if( resolucaoId.equals(resolucao.getIdentificador()) ){
+            if( resolucaoId.equals(resolucao.getId()) ){
                 
                 BsonDocument bdoc = BsonDocument.parse(document.toJson());
                 this.database.getCollection(COLLECTION_NAME).findOneAndDelete(bdoc);
@@ -85,7 +85,7 @@ public class ResolucaoDAO implements InterfaceDAO{
         for(Document document : iterable){
             
             Resolucao resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
-            listaIds.add(resolucao.getIdentificador());
+            listaIds.add(resolucao.getId());
         }        
         
         return(listaIds);

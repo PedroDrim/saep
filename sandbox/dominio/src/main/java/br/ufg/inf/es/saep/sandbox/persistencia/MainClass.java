@@ -5,6 +5,7 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia;
 
+import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestTipo;
 import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
 import br.ufg.inf.es.saep.sandbox.dominio.Regra;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
@@ -13,6 +14,8 @@ import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoDAO;
 import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoPersistence;
 import br.ufg.inf.es.saep.sandbox.persistencia.DAO.TipoDAO;
+import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
+import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestResolucaoPersistence;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
@@ -45,27 +48,8 @@ public class MainClass {
             System.out.println("Tamanho: " + database.getCollection(name).count() );
         }
         
-        //TestAtributo.test1();
-        //TestValor.test1();
-        //TestRegra.test1();
-        TestTipo.test1();
-        TestResolucao.test1();
-        
-        Tipo tipo = TestTipo.get();
-        Resolucao resolucao = TestResolucao.get();
-        
-        ResolucaoPersistence resolucaoPersistence = new ResolucaoPersistence(database);
-        resolucaoPersistence.persiste(resolucao);
-        resolucaoPersistence.persiste(tipo);
-        
-        Tipo teste = resolucaoPersistence.byCodigo("T_tipo1");
-        Resolucao treso = resolucaoPersistence.byId("Res1");
-        List<Tipo> lista = resolucaoPersistence.byNome("T");
-        List<String> resolucoes = resolucaoPersistence.resolucoes();
-        resolucaoPersistence.remove("Res1");
-        
-        System.out.println("OK:");
-        database.drop();
+        TestResolucaoPersistence.teste1(database);
+        //database.drop();
     }
 
 }

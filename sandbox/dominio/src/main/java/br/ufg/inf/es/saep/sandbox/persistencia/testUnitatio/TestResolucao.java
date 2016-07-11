@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.ufg.inf.es.saep.sandbox.persistencia;
+package br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Regra;
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
@@ -29,22 +29,23 @@ public class TestResolucao {
         dependeDe.add("B = 1 + 1");
         dependeDe.add("C = 2*5");
 
-        Regra regra1 = new Regra("B + C", 60 , 0 , dependeDe, "Regra de teste", "A");
-        regra1.setTipoRegra(Regra.EXPRESSAO);
+        Regra regra1 = new Regra("A",Regra.EXPRESSAO, "Regra de teste",
+                60, 0, "B + C", null, null, "RELATO" , 52 , dependeDe);
         
         List<String> dependeDe2 = new ArrayList<>();
-        dependeDe.add("X = 1 + 1");
-        dependeDe.add("Y = 2");
-        dependeDe.add("C = 2*5");
+        dependeDe2.add("X = 1 + 1");
+        dependeDe2.add("Y = 2");
+        dependeDe2.add("C = 2*5");
         
-        Regra regra2 = new Regra(Regra.CONDICIONAL, " X > Y", "2*C", "C-2", 0, dependeDe2, 10, 5);
+        Regra regra2 = new Regra("Z",Regra.CONDICIONAL, "Regra de teste condicional",
+                10, 5, " X > Y", "2*C", "C-2", "RELATO" , 52 , dependeDe2);
         
         List<Regra> regras = new ArrayList<>();
         regras.add(regra1);
         regras.add(regra2);
 
         Date date = Calendar.getInstance().getTime();
-        Resolucao resolucao1 = new Resolucao("Res1", "resolucao de teste", date, regras);
+        Resolucao resolucao1 = new Resolucao("Res1", "Resolucao1", "resolucao de teste", date, regras);
 
         Document document = SaepConversor.convertResolucaoToDocument(resolucao1);
         System.out.println("Resolucao1 : " + document.toJson());
@@ -52,7 +53,7 @@ public class TestResolucao {
         Resolucao resolucao1R = SaepDeconversor.deconvertDocumentToResolucao(document);
 
         Document documentReso = SaepConversor.convertResolucaoToDocument(resolucao1R);
-        System.out.println("Resolucao2 : " + documentReso.toJson());
+        System.out.println("Resolucao1R : " + documentReso.toJson());
         
         resolucao = resolucao1;
         

@@ -7,24 +7,25 @@ package br.ufg.inf.es.saep.sandbox.persistencia.Serialization;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
 import br.ufg.inf.es.saep.sandbox.dominio.Grupo;
+import br.ufg.inf.es.saep.sandbox.dominio.IdentificadorDesconhecido;
+import br.ufg.inf.es.saep.sandbox.dominio.Pontuacao;
 import br.ufg.inf.es.saep.sandbox.dominio.Radoc;
 import br.ufg.inf.es.saep.sandbox.dominio.Regra;
 import br.ufg.inf.es.saep.sandbox.dominio.Relato;
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
-import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.dominio.Valor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.mongodb.util.JSON;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bson.Document;
 
@@ -37,7 +38,7 @@ public class SaepDeconversor {
     public static Valor deconvertDocumentToValor(Document document) {
 
         try {
-            
+
             document.remove("_id");
             Integer tp = document.getInteger("tipo");
             Valor valor = null;
@@ -59,7 +60,7 @@ public class SaepDeconversor {
 
             return (valor);
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para resolucao.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para resolucao.");
         }
 
     }
@@ -68,33 +69,24 @@ public class SaepDeconversor {
 
         try {
 
-            /*Document document;
+            document.remove("_id");
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String relatoJson = mapper.writeValueAsString(relato);
-            document = Document.parse(relatoJson);
+            Document map = (Document) document.get("valorPorNome");
 
-        } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter o relato  para Document.");
-        }
+            Map<String, Valor> mapaValores = new HashMap<>();
+            for (String key : map.keySet()) {
 
-        Document documentAtributoCompleto = new Document();
+                Document valorDoc = (Document) map.get(key);
+                Valor valor = SaepDeconversor.deconvertDocumentToValor(valorDoc);
+                mapaValores.put(key, valor);
+            }
 
-        for (Atributo atributo : tipo.getAtributos()) {
+            Relato relato = new Relato(document.getString("tipo"), mapaValores);
 
-            Valor valor = relato.get(atributo.getNome());
-            Document documentValor = deconvertValorToDocument(valor, atributo.getTipo());
-
-            documentAtributoCompleto.append(atributo.getNome(), documentValor);
-        }
-
-        document.append("valorPorNome", documentAtributoCompleto);
-             */
-            Relato relato = new Relato("1", null);
             return (relato);
+
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para resolucao.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para relato.");
         }
 
     }
@@ -113,13 +105,36 @@ public class SaepDeconversor {
             return (atributo);
 
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para atributo.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para atributo.");
         }
     }
 
     public static Radoc deconvertDocumentToRadoc(Document document) {
 
-        return (null);
+        try {
+
+            document.remove("_id");
+            
+            int i  = document.getInteger("tamanhoRelato").intValue();
+            Document relatosDoc = (Document) document.get("relatos");
+            
+            List<Relato> listRelatos = new ArrayList<>();
+            for(int j = 0; j < i; j++){
+                Document relato = (Document) relatosDoc.get(String.valueOf(j));
+                Relato rel = SaepDeconversor.deconvertDocumentToRelato(relato);
+                listRelatos.add(rel);
+            }
+            
+            Radoc radoc = new Radoc(
+                    document.getString("id"),
+                    document.getInteger("anoBase").intValue(),
+                    listRelatos);
+            
+            return (radoc);
+            
+        } catch (Exception ex) {
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para radoc.");
+        }
     }
 
     public static Tipo deconvertDocumentToTipo(Document document) {
@@ -144,7 +159,7 @@ public class SaepDeconversor {
             return (tipo);
 
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para tipo.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para tipo.");
         }
     }
 
@@ -159,7 +174,7 @@ public class SaepDeconversor {
             return (grupo);
 
         } catch (IOException e) {
-            throw new SaepException("Nao foi possivel converter o Document para grupo.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para grupo.");
         }
     }
 
@@ -189,7 +204,7 @@ public class SaepDeconversor {
             return (regra);
 
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para regra.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para regra.");
         }
     }
 
@@ -220,7 +235,25 @@ public class SaepDeconversor {
             return (resolucao);
 
         } catch (Exception ex) {
-            throw new SaepException("Nao foi possivel converter o Document para resolucao.");
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para resolucao.");
+        }
+
+    }
+
+    public static Pontuacao deconvertDocumentToPontuacao(Document document) {
+
+        try {
+
+            document.remove("_id");
+
+            Document valDoc = (Document) document.get("valor");
+            Valor valor = SaepDeconversor.deconvertDocumentToValor(valDoc);
+            Pontuacao pontuacao = new Pontuacao(document.getString("atributo"), valor);
+
+            return (pontuacao);
+
+        } catch (Exception ex) {
+            throw new IdentificadorDesconhecido("Nao foi possivel converter o Document para pontuacao.");
         }
 
     }

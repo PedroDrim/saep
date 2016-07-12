@@ -5,9 +5,9 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
+import br.ufg.inf.es.saep.sandbox.dominio.IdentificadorDesconhecido;
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
 import br.ufg.inf.es.saep.sandbox.dominio.ResolucaoRepository;
-import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
@@ -39,7 +39,9 @@ public class ResolucaoPersistence implements ResolucaoRepository{
             Document document = this.daoResolucao.search(identificador);
             resolucao = SaepDeconversor.deconvertDocumentToResolucao(document);
             
-        }catch(SaepException e){}    
+        }catch(IdentificadorDesconhecido e){
+            e.printStackTrace();
+        }    
         
         return(resolucao);
     }

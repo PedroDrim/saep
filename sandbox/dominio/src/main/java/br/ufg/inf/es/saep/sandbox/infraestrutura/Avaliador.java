@@ -30,6 +30,19 @@ public class Avaliador implements AvaliaRegraService {
 
                 return new Valor(valor);
 
+            case Regra.CONDICIONAL:
+                float condicao = avaliaExpressao(regra, contexto, regra.getExpressao());
+                float entaoOuSenao;
+                if (condicao != 0f) {
+                    entaoOuSenao = avaliaExpressao(regra, contexto, regra.getEntao());
+                } else {
+                    entaoOuSenao = avaliaExpressao(regra, contexto, regra.getSenao());
+                }
+
+                entaoOuSenao = ajustaLimites(regra, entaoOuSenao);
+
+                return new Valor(entaoOuSenao);
+
             case Regra.SOMATORIO:
                 float somatorio = somatorio(regra, relatos);
 
@@ -44,9 +57,10 @@ public class Avaliador implements AvaliaRegraService {
                 parcial = ajustaLimites(regra, parcial);
 
                 return new Valor(parcial);
-        }
 
-        return new Valor(-999f);
+            default:
+                throw new TipoDeRegraInvalido("avaliaRegra");
+        }
     }
 
     private float somatorio(Regra regra, List<Avaliavel> relatos) {
@@ -67,7 +81,7 @@ public class Avaliador implements AvaliaRegraService {
             try {
                 somatorio += exp.eval().floatValue();
             } catch (RuntimeException rex) {
-                throw new SaepException("Falha na avalição de regra: " + rex.getMessage());
+                throw new AvaliacaoRegraException("Falha na avalição de regra: " + rex.getMessage());
             }
         }
 
@@ -95,7 +109,7 @@ public class Avaliador implements AvaliaRegraService {
             BigDecimal valor = exp.eval();
             return valor.floatValue();
         } catch (RuntimeException re) {
-            throw new SaepException("Avaliação de expressão: " + re.getMessage());
+            throw new AvaliacaoRegraException("Avaliação de expressão: " + re.getMessage());
         }
     }
 

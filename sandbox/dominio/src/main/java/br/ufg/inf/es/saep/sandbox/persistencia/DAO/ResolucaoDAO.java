@@ -5,8 +5,8 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
+import br.ufg.inf.es.saep.sandbox.dominio.IdentificadorDesconhecido;
 import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
-import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
 import com.mongodb.client.MongoDatabase;
@@ -52,7 +52,7 @@ public class ResolucaoDAO implements InterfaceDAO{
             }
         }
         
-        throw new SaepException("Nao foi encontrado resolucao com o id " + resolucaoId);
+        throw new IdentificadorDesconhecido("Nao foi encontrado resolucao com o id " + resolucaoId);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ResolucaoDAO implements InterfaceDAO{
             }
         }
         
-        throw new SaepException("Nao foi encontrado resolucao com o id " + resolucaoId);
+        throw new IdentificadorDesconhecido("Nao foi encontrado resolucao com o id " + resolucaoId);
 
     }
 

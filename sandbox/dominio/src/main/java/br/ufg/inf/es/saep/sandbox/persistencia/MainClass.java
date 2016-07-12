@@ -5,27 +5,13 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia;
 
-import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestTipo;
-import br.ufg.inf.es.saep.sandbox.dominio.Atributo;
-import br.ufg.inf.es.saep.sandbox.dominio.Regra;
-import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
-import br.ufg.inf.es.saep.sandbox.dominio.Resolucao;
-import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
-import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoDAO;
-import br.ufg.inf.es.saep.sandbox.persistencia.DAO.ResolucaoPersistence;
-import br.ufg.inf.es.saep.sandbox.persistencia.DAO.TipoDAO;
-import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
+import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestPontuacao;
+import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestRadoc;
+import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestRelato;
 import br.ufg.inf.es.saep.sandbox.persistencia.testUnitatio.TestResolucaoPersistence;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.bson.Document;
 
 /**
  *
@@ -48,7 +34,7 @@ public class MainClass {
             System.out.println("Tamanho: " + database.getCollection(name).count() );
         }
         
-        TestResolucaoPersistence.teste1(database);
+        TestRadoc.test1();
         //database.drop();
     }
 

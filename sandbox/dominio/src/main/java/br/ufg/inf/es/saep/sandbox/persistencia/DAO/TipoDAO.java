@@ -5,7 +5,7 @@
  */
 package br.ufg.inf.es.saep.sandbox.persistencia.DAO;
 
-import br.ufg.inf.es.saep.sandbox.dominio.SaepException;
+import br.ufg.inf.es.saep.sandbox.dominio.IdentificadorDesconhecido;
 import br.ufg.inf.es.saep.sandbox.dominio.Tipo;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepConversor;
 import br.ufg.inf.es.saep.sandbox.persistencia.Serialization.SaepDeconversor;
@@ -52,7 +52,7 @@ public class TipoDAO implements InterfaceDAO{
             }
         }
         
-        throw new SaepException("Nao foi encontrado tipo com o id " + tipoId);
+        throw new IdentificadorDesconhecido("Nao foi encontrado tipo com o id " + tipoId);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class TipoDAO implements InterfaceDAO{
             }
         }
         
-        throw new SaepException("Nao foi encontrado tipo com o id " + tipoId);
+        throw new IdentificadorDesconhecido("Nao foi encontrado tipo com o id " + tipoId);
 
     }
 

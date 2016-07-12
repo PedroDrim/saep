@@ -1,4 +1,9 @@
-ResolucaoPersistence -> (1) Tipo , (2) Resolucao
+ResolucaoRepository-> (1) Tipo , (2) Resolucao
 (1) Tipo (OK!) -> (*) Atributo (OK!)
 (2) Resolucao (OK!) -> (2.1) Regra (OK!)
 (2.1) Regra (OK!) -> (*) Atributo (OK!)
+
+AvaliaRegraService -> (1) Regra , (2) Valor , (3) Avaliavel
+(1) Regra (OK!) -> (*) Atributo (OK!)
+(2) Valor (OK!)
+(3) Avaliavel (OK!) -> (2)Valor (OK!)

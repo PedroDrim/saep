@@ -1,4 +1,4 @@
-﻿<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
@@ -10,18 +10,18 @@
     <version>1.0.0</version>
 	
     <name>SAEP (sandbox)</name>
-	<url>https://github.com/kyriosdata/saep</url>
-	<inceptionYear>2016</inceptionYear>
+    <url>https://github.com/kyriosdata/saep</url>
+    <inceptionYear>2016</inceptionYear>
 
-	<developers>
-		<developer>
-			<id>kyriosdata</id>
-			<name>Fábio Nogueira de Lucena</name>
-			<email>fabio@inf.ufg.br</email>
+    <developers>
+        <developer>
+            <id>kyriosdata</id>
+            <name>Fábio Nogueira de Lucena</name>
+            <email>fabio@inf.ufg.br</email>
             <organization>Instituto de Informática (UFG)</organization>
             <organizationUrl>http://www.inf.ufg.br</organizationUrl>
-		</developer>
-	</developers>
+        </developer>
+    </developers>
 		
     <modules>
         <module>dominio</module>
@@ -55,9 +55,29 @@
         </dependency>
 
         <dependency>
+            <groupId>com.udojava</groupId>
+            <artifactId>EvalEx</artifactId>
+            <version>1.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.kyriosdata.saep</groupId>
             <artifactId>saep-dominio</artifactId>
             <version>1.0.3</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.7</version>
+            <scope>compile</scope>
+        </dependency>
+    
     </dependencies>
 </project>
